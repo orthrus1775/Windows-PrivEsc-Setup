@@ -454,6 +454,32 @@ function Set-WorkingDirectories {
     }
 }
 
+function Add-TempToSystemPath {
+    [CmdletBinding()]
+    param()
+
+    Write-Host "[*] Adding C:\Temp to machine PATH." -ForegroundColor Yellow
+
+    $currentPath = [Environment]::GetEnvironmentVariable(
+        "Path",
+        "Machine"
+    )
+
+    if ($currentPath -notlike "*C:\Temp*") {
+
+        [Environment]::SetEnvironmentVariable(
+            "Path",
+            "$currentPath;C:\Temp",
+            "Machine"
+        )
+
+        Write-Host "[+] C:\Temp added to machine PATH." -ForegroundColor Green
+    }
+    else {
+        Write-Host "[*] C:\Temp already exists in machine PATH." -ForegroundColor Cyan
+    }
+}
+
 function New-VulnerableService {
     [CmdletBinding()]
     param(
@@ -974,6 +1000,7 @@ function Invoke-WinVulnsSetup {
     Test-IsAdministrator
     Set-LocalAdminAccount
     Set-WorkingDirectories
+    Add-TempToSystemPath
     Install-DllHijackServiceVulnerability
     Install-ServiceBinPathVulnerability
     Install-UnquotedServicePathVulnerability
